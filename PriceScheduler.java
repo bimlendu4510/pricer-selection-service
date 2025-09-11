@@ -42,4 +42,35 @@ public class PriceScheduler {
             System.out.println("Group: " + group + " => " + finalPrice + " (Strategy: " + strategy + ")");
         });
     }
+    private Map<String, PricingStrategy> loadSourceStrategies() {
+    Map<String, PricingStrategy> sourceConfig = new HashMap<>();
+    Map<String, String> redisConfig = redisClient.hgetAll("pricing:strategy");
+
+    redisConfig.forEach((source, strategyName) -> {
+        try {
+            PricingStrategy strategy = PricingStrategy.valueOf(strategyName.toUpperCase());
+            sourceConfig.put(source, strategy);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid strategy in Redis for " + source + ": " + strategyName);
+        }
+    });
+
+    return sourceConfig;
+}
+
+private Map<String, Integer> loadSourceLookbacks() {
+    Map<String, Integer> lookbacks = new HashMap<>();
+    Map<String, String> redisLookback = redisClient.hgetAll("pricing:lookback");
+
+    redisLookback.forEach((source, value) -> {
+        try {
+            lookbacks.put(source, Integer.parseInt(value));
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid lookback in Redis for " + source + ": " + value);
+        }
+    });
+
+    return lookbacks;
+}
+
 }
