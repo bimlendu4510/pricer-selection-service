@@ -1,0 +1,4 @@
+HSET pricing:config "P1:USD.INR" '{"strategy":"BEST","lookback":1}'
+HSET pricing:config "P1:EUR.USD" '{"strategy":"DEEP_AVG","lookback":3}'
+HSET pricing:config "P2:USD.INR" '{"strategy":"VWAP","lookback":5}'
+HSET pricing:config "P3:EUR.USD" '{"strategy":"DEEP_VWAP","lookback":7}'
