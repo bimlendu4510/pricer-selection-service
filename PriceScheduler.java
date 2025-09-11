@@ -72,5 +72,21 @@ private Map<String, Integer> loadSourceLookbacks() {
 
     return lookbacks;
 }
+private Map<String, SourceConfig> loadSourceConfigs() {
+    Map<String, String> redisConfig = redisClient.hgetAll("pricing:config");
+    ObjectMapper mapper = new ObjectMapper();
+    Map<String, SourceConfig> configMap = new HashMap<>();
+
+    redisConfig.forEach((source, json) -> {
+        try {
+            SourceConfig cfg = mapper.readValue(json, SourceConfig.class);
+            configMap.put(source, cfg);
+        } catch (Exception e) {
+            System.err.println("Invalid config JSON for " + source + ": " + json);
+        }
+    });
+
+    return configMap;
+}
 
 }
